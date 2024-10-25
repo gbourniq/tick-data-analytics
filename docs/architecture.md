@@ -7,7 +7,7 @@ For this project I decided to use snowflake and dbt given the amount of data tha
 Python is used for statistical analysis and plotting, where the data is retrieved by the snowpark python connector.
 
 The overall architecture diagram can be seen below:
-![architecture](.github/images/architecture.png)
+![architecture](../.github/images/architecture.png)
 
 ## Snowflake
 
@@ -19,9 +19,9 @@ Snowflake's Free tier comes with $400 worth of credits, which is more than enoug
 
 The first step is to parse the data from the `ES.h5` file into multiple smaller parquet files which is required by Snowflake.
 
-This is done by the [scripts/convert_h5_to_parquet_chunks.py](scripts/convert_h5_to_parquet_chunks.py) script which takes about 1 hour to run.
+This is done by the [scripts/convert_h5_to_parquet_chunks.py](../scripts/convert_h5_to_parquet_chunks.py) script which takes about 1 hour to run.
 
-The data is then uploaded to an S3 bucket by the [scripts/upload_parquet_chunks_to_s3.py](scripts/upload_parquet_chunks_to_s3.py) script.
+The data is then uploaded to an S3 bucket by the [scripts/upload_parquet_chunks_to_s3.py](../scripts/upload_parquet_chunks_to_s3.py) script.
 
 In practice, these functions could run in AWS Batch / ECS given the size of the data.
 
@@ -32,11 +32,11 @@ In practice, these functions could run in AWS Batch / ECS given the size of the 
 
 ### Load
 
-Next step is to load the data into Snowflake, which is done through an s3 integration object and external stage (see [infra](infra) DDL statements).
+Next step is to load the data into Snowflake, which is done through an s3 integration object and external stage (see [infra](../infra) DDL statements).
 
 The external table, which serves as a reference to the S3 location, is created during the `make setup` process, and can be found in the SOURCE schema.
 
-The raw data is then loaded into the [stg**mock_provider**equity_index_future\_\_tick_data](models/equity_index_future/staging/stg__mock_provider__equity_index_future__tick_data.sql) staging table as part of running the dbt pipeline.
+The raw data is then loaded into the [stg**mock_provider**equity_index_future\_\_tick_data](../models/equity_index_future/staging/stg__mock_provider__equity_index_future__tick_data.sql) staging table as part of running the dbt pipeline.
 
 ### Transformation
 
@@ -63,12 +63,12 @@ models/
 
 The model lineage can be seen in the diagram below:
 
-![dbt lineage](.github/images/dbt_model_lineage.png)
+![dbt lineage](../.github/images/dbt_model_lineage.png)
 
 This diagram is a screenshot from the dbt docs site, which can be viewed by running `make serve-docs`.
 
 ## Analysis
 
-The analysis is done in the [analysis](analysis) directory, where the data is retrieved by the snowpark python connector and plots are generated.
+The analysis is done in the [analysis](../analysis) directory, where the data is retrieved by the snowpark python connector and plots are generated.
 
-These should answer the questions in [docs/analysis.md](docs/analysis.md) documentation.
+These should answer the questions in [docs/analysis.md](../docs/analysis.md) documentation.

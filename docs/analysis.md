@@ -1,13 +1,13 @@
 # E-mini S&P 500 Futures Tick Data Analysis
 
-Using the series of E-mini S&P 500 futures tick data (available for download [https://azstatpap0001.blob.core.windows.net/hackerrank/QDC/ES.h5?sv=2019-12-12&st=2021-01-21T11%3A09%3A46Z&se=2029-01-22T11%3A09%3A00Z&sr=b&sp=r&sig=%2BjUf7E0wqX%2F0mauFIZRjR25C3ih3umN2ZpC9UlK7a5M%3D]), perform the following transformations and analyses. Provide code for each step.
+Using the series of E-mini S&P 500 futures tick data (available for [download](https://azstatpap0001.blob.core.windows.net/hackerrank/QDC/ES.h5?sv=2019-12-12&st=2021-01-21T11%3A09%3A46Z&se=2029-01-22T11%3A09%3A00Z&sr=b&sp=r&sig=%2BjUf7E0wqX%2F0mauFIZRjR25C3ih3umN2ZpC9UlK7a5M%3D)), perform the following transformations and analyses. Provide code for each step.
 
 ## Data Preparation
 
 > a. Form a continuous price series by adjusting for rolls.
 
-This is done in the [data_platform.transform.int__es_equity_index_future__continuous](models/equity_index_future/transform/int__es_equity_index_future__continuous.sql) table.
-The table can be queried directly in Snowflake, or via the [analyses/1_es_futures_adjusted_prices.py](analyses/1_es_futures_adjusted_prices.py) script.
+This is done in the [data_platform.transform.int__es_equity_index_future__continuous](../models/equity_index_future/transform/int__es_equity_index_future__continuous.sql) table.
+The table can be queried directly in Snowflake, or via the [analyses/1_es_futures_adjusted_prices.py](../analyses/1_es_futures_adjusted_prices.py) script.
 
 ## Bar Formation
 
@@ -19,9 +19,9 @@ The table can be queried directly in Snowflake, or via the [analyses/1_es_future
 
 Sample observations can be found in the following tables:
 
-- [data_platform.transform.int__es_equity_index_future__tick_bars](models/equity_index_future/transform/int__es_equity_index_future__tick_bars.sql)
-- [data_platform.transform.int__es_equity_index_future__volume_bars](models/equity_index_future/transform/int__es_equity_index_future__volume_bars.sql)
-- [data_platform.transform.int__es_equity_index_future__dollars_traded_bars](models/equity_index_future/transform/int__es_equity_index_future__dollars_traded_bars.sql)
+- [data_platform.transform.int__es_equity_index_future__tick_bars](../models/equity_index_future/transform/int__es_equity_index_future__tick_bars.sql)
+- [data_platform.transform.int__es_equity_index_future__volume_bars](../models/equity_index_future/transform/int__es_equity_index_future__volume_bars.sql)
+- [data_platform.transform.int__es_equity_index_future__dollars_traded_bars](../models/equity_index_future/transform/int__es_equity_index_future__dollars_traded_bars.sql)
 
 ## Analysis Tasks
 
@@ -31,9 +31,9 @@ Sample observations can be found in the following tables:
 > - Plot a time series of that bar count.
 > - Question: What bar type produces the most stable weekly count? Why?
 
-Weekly bar counts are calculated and aggregated in the [data_platform.fact.timeseries.es_equity_index_future__weekly_bar_counts](models/equity_index_future/fact/timeseries__es_equity_index_future__weekly_bar_counts.sql) table.
-The script [analyses/2_weekly_bar_counts.py](analyses/2_weekly_bar_counts.py) can be used to generate the following plot:
-![Weekly Bar Counts and Coefficient of Variation by Bar Type](analyses/2_weekly_bar_counts.png)
+Weekly bar counts are calculated and aggregated in the [data_platform.fact.timeseries.es_equity_index_future__weekly_bar_counts](../models/equity_index_future/fact/timeseries__es_equity_index_future__weekly_bar_counts.sql) table.
+The script [analyses/2_weekly_bar_counts.py](../analyses/2_weekly_bar_counts.py) can be used to generate the following plot:
+![Weekly Bar Counts and Coefficient of Variation by Bar Type](../analyses/2_weekly_bar_counts.png)
 
 Volume bars produce the most stable weekly count, likely due to:
 
@@ -48,9 +48,9 @@ Volume bars produce the most stable weekly count, likely due to:
 > - Compute the serial correlation of price-returns for the three bar types.
 > - Question: What bar method has the lowest serial correlation?
 
-The serial correlation of price returns for tick, volume, and dollar bars is calculated in the [data_platform.fact.timeseries.es_equity_index_future__bar_returns_correlation](models/equity_index_future/fact/timeseries__es_equity_index_future__bar_returns_correlation.sql) table.
-The script [analyses/3_bar_returns_correlation.py](analyses/3_bar_returns_correlation.py) can be used to generate the following plot:
-![Serial Correlation of Price Returns by Bar Type](analyses/3_bar_returns_correlation.png)
+The serial correlation of price returns for tick, volume, and dollar bars is calculated in the [data_platform.fact.timeseries.es_equity_index_future__bar_returns_correlation](../models/equity_index_future/fact/timeseries__es_equity_index_future__bar_returns_correlation.sql) table.
+The script [analyses/3_bar_returns_correlation.py](../analyses/3_bar_returns_correlation.py) can be used to generate the following plot:
+![Serial Correlation of Price Returns by Bar Type](../analyses/3_bar_returns_correlation.png)
 
 All serial correlation values are very close to zero, which suggests that the returns for all bar types are close to being serially uncorrelated.
 The bar method with the lowest serial correlation in absolute terms is tick bars (0.001544), followed by dollar bars (0.013588), and then volume bars (-0.023833).
@@ -63,9 +63,9 @@ Tick bars seem to be the most effective at reducing serial correlation, which co
 > - Compute the variance of those variances.
 > - Question: What method exhibits the smallest variance of variances?
 
-Monthly bars variances are calculated in the [data_platform.fact.timeseries.es_equity_index_future__monthly_bar_variance](models/equity_index_future/fact/timeseries__es_equity_index_future__monthly_bar_variance.sql) table.
-The script [analyses/4_monthly_bar_variance.py](analyses/4_monthly_bar_variance.py) can be used to visualise the monthly bar count variance by bar type as well as the variance of the monthly bar count variances.
-![Monthly Bar Variance by Bar Type And Variance of Monthly Bar Count Variances](analyses/4_monthly_bar_variance.png)
+Monthly bars variances are calculated in the [data_platform.fact.timeseries.es_equity_index_future__monthly_bar_variance](../models/equity_index_future/fact/timeseries__es_equity_index_future__monthly_bar_variance.sql) table.
+The script [analyses/4_monthly_bar_variance.py](../analyses/4_monthly_bar_variance.py) can be used to visualise the monthly bar count variance by bar type as well as the variance of the monthly bar count variances.
+![Monthly Bar Variance by Bar Type And Variance of Monthly Bar Count Variances](../analyses/4_monthly_bar_variance.png)
 
 Volume bars exhibit the smallest variance of variances, followed by dollars-traded bars, and then tick bars.
 
@@ -74,8 +74,8 @@ Volume bars exhibit the smallest variance of variances, followed by dollars-trad
 > - Apply the Jarque-Bera normality test on returns from the three bar types.
 > - Question: What method achieves the lowest test statistic?
 
-The Jarque-Bera normality test is applied in the script [analyses/5_jarque_bera_test.py](analyses/5_jarque_bera_test.py).
-![Jarque-Bera Test Statistic by Bar Type](analyses/5_jarque_bera_test.png)
+The Jarque-Bera normality test is applied in the script [analyses/5_jarque_bera_test_bar_returns.py](../analyses/5_jarque_bera_test_bar_returns.py).
+![Jarque-Bera Test Statistic by Bar Type](../analyses/5_jarque_bera_test.png)
 
 Jarque-Bera Test Results:
 
