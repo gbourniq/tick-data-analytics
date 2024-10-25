@@ -1,0 +1,21 @@
+default:
+  target: data_platform
+  outputs:
+    data_platform:
+      type: snowflake
+      # Free-Tier Snowflake account
+      account: AKTNEGQ-QJ07045
+      user: DBT_USER
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: SYSADMIN
+      database: DATA_PLATFORM
+      warehouse: DBT_TRANSFORM_WH_M
+      schema: SOURCE
+      threads: 16
+      client_session_keep_alive: False
+      query_tag: 'tick-data-analysis-user'
+      connect_retries: 0
+      connect_timeout: 10
+      retry_on_database_errors: False
+      retry_all: False
+      reuse_connections: False

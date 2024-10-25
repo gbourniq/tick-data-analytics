@@ -1,0 +1,154 @@
+name: 'data_platform'
+version: '0.1.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'default'
+
+# These configurations specify where dbt should look for different types of files.
+# The `source-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+on-run-end:
+  - "{{ dbt_project_evaluator.print_dbt_project_evaluator_issues() }}"
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  dbt_project_evaluator:
+    dbt_project_evaluator_exceptions:
+      +enabled: false  # required so that we can use our own seed for exceptions
+  data_platform:
+    +quote_columns: true
+    dbt_project_evaluator_exceptions:
+      tags: ["dbt_project_evaluator_exceptions"]
+      +quote_columns: false
+
+
+vars:
+  dbt_date:time_zone: "UTC"
+  dbt_project_evaluator:
+
+    # -- Tests and docs coverage variables --
+    documentation_coverage_target: 0
+    test_coverage_target: 0
+
+    primary_key_test_macros: [["dbt.test_unique", "dbt.test_not_null"], ["dbt_utils.test_unique_combination_of_columns"]]
+
+    # -- Graph variables --
+    # node types to test for primary key coverage. acceptable node types: model, source, snapshot, seed
+    enforced_primary_key_node_types: ["model"]
+
+    # -- DAG variables --
+    models_fanout_threshold: 10
+
+    # -- Naming conventions variables --
+    # to add a new "model type", update the variable model_types
+    # and create new variables with the names <model_type>_folder_name and/or <model_type>_prefixes
+    model_types: ['staging', 'intermediate', 'marts', 'other']
+
+    staging_folder_name: "staging"
+    intermediate_folder_name: "transform"
+    marts_folder_name: "fact"
+
+    staging_prefixes: ["stg_"]
+    intermediate_prefixes: ["int_", "map_", "util_"]
+    marts_prefixes: ["timeseries_", "dim_"]
+    other_prefixes: ["rpt_", "validation_"]
+
+    # -- Performance variables --
+    chained_views_threshold: 5
+
+
+quoting:
+  database: false
+  schema: false
+  identifier: false
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/ directory
+# as tables. These settings can be overridden in the individual model files
+# using the `{{ config(...) }}` macro.
+models:
+  dbt_project_evaluator:
+    # https://dbt-labs.github.io/dbt-project-evaluator/0.8/rules
+    +enabled: true
+    +schema: dbt_project_evaluator
+    marts:
+      # https://github.com/dbt-labs/dbt-project-evaluator/blob/main/models/marts/dag/dag.yml
+      dag:
+        fct_rejoining_of_upstream_concepts:
+          +enabled: false
+        fct_source_fanout:
+          +enabled: false
+        fct_staging_dependent_on_marts_or_intermediate:
+          +enabled: false
+        fct_too_many_joins:
+          +enabled: false
+      # https://github.com/dbt-labs/dbt-project-evaluator/blob/main/models/marts/documentation/documentation.yml
+      documentation:
+        fct_undocumented_sources:
+          +enabled: false
+        fct_undocumented_source_tables:
+          +enabled: false
+      # https://github.com/dbt-labs/dbt-project-evaluator/blob/main/models/marts/governance/governance.yml
+      governance:
+        fct_undocumented_public_models:
+          +enabled: false
+      # https://github.com/dbt-labs/dbt-project-evaluator/blob/main/models/marts/performance/performance.yml
+      performance:
+        fct_chained_views_dependencies:
+          +enabled: false
+      tests:
+        fct_sources_without_freshness:
+          +enabled: false
+  data_platform:
+    +on_schema_change: "fail"
+    equity_index_future:
+      +tags: ["equity_index_future"]
+      fact:
+        +schema: FACT
+        +materialized: table
+        +snowflake_warehouse: DBT_TRANSFORM_WH_M
+      transform:
+        +schema: TRANSFORM
+        +materialized: table
+        +snowflake_warehouse: DBT_TRANSFORM_WH_M
+      staging:
+        +schema: STAGING
+        +materialized: table
+        +snowflake_warehouse: DBT_TRANSFORM_WH_M
+
+
+tests:
+  dbt_project_evaluator:
+    +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'error') }}"
+    +error_if: ">0"
+    +limit: 100
+  data_platform:
+    +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'error') }}"
+    +store_failures: true
+    +schema: test_failures
+    # singular:
+    #   equity_index_future:
+    #     +tags: ["equity_index_future"]
+
+
+flags:
+  send_anonymous_usage_stats: False
+  use_colors: True
+  indirect_selection: buildable
+  warn_error_options:
+    silence: # To silence or ignore warnings
+      # https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax
+      - TestsConfigDeprecation

@@ -1,0 +1,16 @@
+packages:
+    # https://hub.getdbt.com/dbt-labs/dbt_utils/latest
+  - package: dbt-labs/dbt_utils
+    version: 1.3.0
+    # https://hub.getdbt.com/calogica/dbt_expectations/latest
+  - package: calogica/dbt_expectations
+    version: 0.10.4
+    # https://hub.getdbt.com/dbt-labs/dbt_external_tables/latest
+  - package: dbt-labs/dbt_external_tables
+    version: 0.9.0
+    # https://hub.getdbt.com/dbt-labs/dbt_project_evaluator/latest
+  - package: dbt-labs/dbt_project_evaluator
+    version: 0.14.2
+    # https://github.com/calogica/dbt-date
+  - package: calogica/dbt_date
+    version: [">=0.10.0", "<0.11.0"]

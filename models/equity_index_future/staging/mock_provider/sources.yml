@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: mock_provider
+    tags: [futures]
+    schema: SOURCE
+    tables:
+      - name: equity_index_future__tick_data
+        identifier: src__mock_provider__equity_index_future__tick_data
+        external:
+          location: '@source.load_data_staging/timeseries/equity_index_future/'
+          auto_refresh: true
+          file_format: source.parquet_fileformat
+          partitions:
+            - name: internal_id
+              data_type: string
+              expression: SPLIT_PART(SPLIT_PART(metadata$filename, '/', 3), '=', 2)
+            - name: data_provider
+              data_type: string
+              expression: SPLIT_PART(SPLIT_PART(metadata$filename, '/', 4), '=', 2)

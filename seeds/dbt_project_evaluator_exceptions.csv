@@ -1,0 +1,9 @@
+fct_name,column_name,id_to_exclude,comment
+fct_undocumented_models,model_type,staging,Bypass documentation checks for 'staging' models
+fct_undocumented_models,model_type,intermediate,Bypass documentation checks for 'intermediate' models
+fct_undocumented_models,model_type,other,Bypass documentation checks for 'other' models
+fct_missing_primary_key_tests,model_type,staging,Bypass PK checks for 'staging' models
+fct_missing_primary_key_tests,model_type,intermediate,Bypass PK checks for 'intermediate' models
+fct_missing_primary_key_tests,model_type,other,Bypass PK checks for 'other' models
+fct_root_models,child,map__%,Models called *_seed are allowed to have no direct parents
+fct_root_models,child,util__%,helper models are allowed to have no direct parents

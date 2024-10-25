@@ -1,0 +1,18 @@
+selectors:
+  - name: exclude_resources
+    description: Common resources to exclude from selectors
+    definition:
+      union:
+        - 'resource_type:seed'
+
+  - name: es_equity_index_future
+    default: false
+    description: dbt selector for the ES equity index futures pipeline.
+    definition:
+      union:
+        - method: path
+          value: models/equity_index_future/fact
+          parents: true
+        - exclude:
+            - method: selector
+              value: exclude_resources

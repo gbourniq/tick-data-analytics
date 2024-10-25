@@ -1,0 +1,58 @@
+models:
+  - name: stg__mock_provider__equity_index_future__tick_data
+    description: |
+      Tick-level data for the E-mini S&P 500 Futures Contract (ES),
+      including price, volume, and timestamp information.
+
+    columns:
+
+      - name: index_internal_id
+        data_type: string
+        description: A unique identifier for each record.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - ES_INDEX_FUTURES
+
+      - name: data_provider
+        data_type: string
+        description: The provider of the data.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'mock_provider'
+
+      - name: contract_symbol
+        data_type: string
+        description: The symbol of the futures contract.
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^ES[HMUZ]\\d{2}$'
+
+      - name: price
+        data_type: float
+        description: The price of the futures contract.
+        tests:
+          - not_null
+
+      - name: trading_datetime
+        data_type: timestamp
+        description: The date and time of the trade.
+        tests:
+          - not_null
+
+      - name: volume
+        data_type: integer
+        description: The trading volume.
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              strictly: false
+
+      - name: ingested_at
+        data_type: timestamp
+        description: The timestamp when the record was ingested.
